@@ -11,7 +11,6 @@ from visual import BaseVisual
 class WorldData:
     def __init__(self, worldFixedData: stats.FixedData) -> None:
         self.WFD = worldFixedData #  <- worldFixedData
-        self.fileName = ""
         self.__loadWorldMap()
 
     def choiseFile(self, fileName: str) -> None:
@@ -28,14 +27,14 @@ class WorldData:
             with open(self.fileName, "r") as file:
                 self.worldMap = load(file.read())
 
-        except FileNotFoundError:
+        except (FileNotFoundError, AttributeError):
             self.worldMap = self.__makeWorldMap()
 
     def saveWorldMap(self) -> None:
         try:
             with open(self.fileName, "w") as file:
                 file.write(str(self.worldMap))
-        except FileNotFoundError:
+        except (FileNotFoundError, AttributeError):
             with open("world.txt", "w") as file:
                 file.write(str(self.worldMap))
 
@@ -94,15 +93,19 @@ class WorldEvtFunc:
             runingStats.cameraPixelPos[1] = 0
 
     @staticmethod
-    def mousePress(datas: tuple[
+    def mousePress(
+            datas: tuple[
             list,
-            WorldData]) -> None:
+            WorldData],
+            cameraPos: list[int, int]) -> None:
 
         WD = datas[1]
         mouseEvt = datas[0]
 
         if mouseEvt[2]:
-            WD.worldMap[mouseEvt[1]][mouseEvt[0]]["struct"] = 1
+            WD.worldMap[
+                mouseEvt[1] + cameraPos[1]][
+                    mouseEvt[0] + cameraPos[0]]["struct"] = {"num": 1}
             WD.saveWorldMap()
 
 
@@ -117,6 +120,7 @@ class World:
     def getRuningStatus(self, runingStatus: stats.RuningStatus) -> None:
         self.runingStats = runingStatus
         self.worldVisual.makeVisual(self.runingStats.blockSize)
+        self.struct.makeVisual(self.runingStats.blockSize)
 
     def getScreenData(self, ScreenData: stats.ScreenData) -> None:
         self.screenData = ScreenData
@@ -136,10 +140,10 @@ class World:
 
         WorldEvtFunc.keyPress(KeyDatas)
         if all(self.runingStats.mouseEvt):
-            WorldEvtFunc.mousePress(MouseDatas)
+            WorldEvtFunc.mousePress(MouseDatas, self.runingStats.cameraPosMap)
 
     def __drawStruct(self, screen: pg.surface.Surface) -> None:
-        if self.nowStruct == 1:
+        if "sum" in self.nowStruct and self.nowStruct["num"] is 1:
             screen.blit(self.struct["O_1"], self.tilePos)
 
     def draw(self, screen: pg.surface.Surface) -> None:
