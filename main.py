@@ -9,14 +9,13 @@ class Game:
     def __init__(self) -> None:
         pg.init()
         self.runingStats = stats.RuningStatus()
-        self.screenData = stats.ScreenData()
 
         ScreenInitSize = pg.display.Info()
         ScreenSize = [
             ScreenInitSize.current_w,
             ScreenInitSize.current_h]
         
-        self.screenData.ScreenMapSize = [
+        self.runingStats.ScreenMapSize = [
             int(ScreenInitSize.current_w / 50), 
             int(ScreenInitSize.current_h / 50)]
         
@@ -25,7 +24,7 @@ class Game:
 
     def __gameProc(self) -> None:
         self.worldClass = World()
-        self.worldClass.getScreenData(self.screenData)
+        self.worldClass.getScreenData(self.runingStats)
         self.worldClass.getRuningStatus(self.runingStats)
         self.KeyClass = KeyMouse.KeyPress()
         self.KeyClass.getRuning(self.runingStats)
@@ -45,6 +44,8 @@ class Game:
             self.worldClass.draw(self.screen)
             pg.display.flip()
             pg.time.Clock().tick(self.runingStats.fps)
+        
+        self.worldClass.WD.saveWorldMap()
 
 
 if __name__ == "__main__":

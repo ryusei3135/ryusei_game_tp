@@ -106,7 +106,6 @@ class WorldEvtFunc:
             WD.worldMap[
                 mouseEvt[1] + cameraPos[1]][
                     mouseEvt[0] + cameraPos[0]]["struct"] = {"num": 1}
-            WD.saveWorldMap()
 
 
 class World:
@@ -122,12 +121,17 @@ class World:
         self.worldVisual.makeVisual(self.runingStats.blockSize)
         self.struct.makeVisual(self.runingStats.blockSize)
 
-    def getScreenData(self, ScreenData: stats.ScreenData) -> None:
+    def getScreenData(self, ScreenData: stats.RuningStatus) -> None:
         self.screenData = ScreenData
 
         self.ScreenMapSize: list[int, int] = self.screenData.ScreenMapSize
 
     def update(self) -> None:
+        if self.runingStats.saveProc:
+            self.WD.saveWorldMap()
+            self.runingStats.saveProc = False
+            print("save ok")
+
         KeyDatas = [
             self.runingStats.cameraPixelPos,
             self.runingStats.blockSize,
@@ -143,7 +147,7 @@ class World:
             WorldEvtFunc.mousePress(MouseDatas, self.runingStats.cameraPosMap)
 
     def __drawStruct(self, screen: pg.surface.Surface) -> None:
-        if "sum" in self.nowStruct and self.nowStruct["num"] is 1:
+        if "num" in self.nowStruct and self.nowStruct["num"] is 1:
             screen.blit(self.struct["O_1"], self.tilePos)
 
     def draw(self, screen: pg.surface.Surface) -> None:

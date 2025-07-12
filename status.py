@@ -17,14 +17,12 @@ class RuningStatus:
         self.moveSpeed: int = 10
 
         self.MOUSE_EVT_INIT: list[int, int, int] \
-            = [-1, -1, -1]
+            = [None, None, None]
         self.mouseEvt: list[int, int, int] \
             = self.MOUSE_EVT_INIT
-
-
-class ScreenData:
-    def __init__(self) -> None:
+        
         self.ScreenMapSize: tuple[int, int]
+        self.saveProc: bool = False
 
 
 class FixedData:
