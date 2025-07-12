@@ -17,7 +17,7 @@ class RuningStatus:
         self.moveSpeed: int = 10
 
         self.MOUSE_EVT_INIT: list[int, int, int] \
-            = [None, None, None]
+            = [-1, -1, -1]
         self.mouseEvt: list[int, int, int] \
             = self.MOUSE_EVT_INIT
 

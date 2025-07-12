@@ -95,16 +95,14 @@ class WorldEvtFunc:
 
     @staticmethod
     def mousePress(datas: tuple[
-            stats.RuningStatus,
+            list,
             WorldData]) -> None:
 
         WD = datas[1]
-        runingStats = datas[0]
-        mouseEvt = runingStats.mouseEvt
+        mouseEvt = datas[0]
 
         if mouseEvt[2]:
-            pos = mouseEvt[0:2]
-            WD.worldMap[pos[1]][pos[0]]["block"] = 50
+            WD.worldMap[mouseEvt[1]][mouseEvt[0]]["struct"] = 1
             WD.saveWorldMap()
 
 
@@ -114,6 +112,7 @@ class World:
 
         self.WD = WorldData(self.worldFixedData) #  <- worldData
         self.worldVisual = BaseVisual("world")
+        self.struct = BaseVisual("struct")
 
     def getRuningStatus(self, runingStatus: stats.RuningStatus) -> None:
         self.runingStats = runingStatus
@@ -139,24 +138,31 @@ class World:
         if all(self.runingStats.mouseEvt):
             WorldEvtFunc.mousePress(MouseDatas)
 
+    def __drawStruct(self, screen: pg.surface.Surface) -> None:
+        if self.nowStruct == 1:
+            screen.blit(self.struct["O_1"], self.tilePos)
+
     def draw(self, screen: pg.surface.Surface) -> None:
         CameraPosMap = self.runingStats.cameraPosMap
 
         for ScreenY in range(CameraPosMap[1], self.ScreenMapSize[1] + CameraPosMap[1] + 1):
             for ScreenX in range(CameraPosMap[0], self.ScreenMapSize[0] + CameraPosMap[0] + 1):
-                nowTile = self.WD.worldMap[ScreenY][ScreenX]["block"]
-                tilePos: tuple[int, int] = (
+                self.nowTile = self.WD.worldMap[ScreenY][ScreenX]["block"]
+                self.nowStruct = self.WD.worldMap[ScreenY][ScreenX]["struct"]
+                self.tilePos: tuple[int, int] = (
                     (ScreenX - CameraPosMap[0]) * 50 + self.runingStats.cameraPixelPos[0],
                     (ScreenY - CameraPosMap[1]) * 50 + self.runingStats.cameraPixelPos[1]
                 )
 
-                if nowTile == 0:
-                    screen.blit(self.worldVisual["tile_2"], tilePos)
-                if 1 <= nowTile < 2:
-                    screen.blit(self.worldVisual["tile_1"], tilePos)
-                    if nowTile == 1.5:
-                        screen.blit(self.worldVisual["tile_5"], tilePos)
-                if nowTile == 2:
-                    screen.blit(self.worldVisual["tile_3"], tilePos)
-                if nowTile == 3:
-                    screen.blit(self.worldVisual["tile_4"], tilePos)
+                if self.nowTile == 0:
+                    screen.blit(self.worldVisual["tile_2"], self.tilePos)
+                if 1 <= self.nowTile < 2:
+                    screen.blit(self.worldVisual["tile_1"], self.tilePos)
+                    if self.nowTile == 1.5:
+                        screen.blit(self.worldVisual["tile_5"], self.tilePos)
+                if self.nowTile == 2:
+                    screen.blit(self.worldVisual["tile_3"], self.tilePos)
+                if self.nowTile == 3:
+                    screen.blit(self.worldVisual["tile_4"], self.tilePos)
+
+                self.__drawStruct(screen)

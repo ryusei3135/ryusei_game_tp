@@ -3,6 +3,7 @@ import pygame as pg
 import status as stats
 from world import World
 import KeyMouse
+import visual
 
 
 class Game:

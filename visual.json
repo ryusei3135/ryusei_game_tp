@@ -5,5 +5,8 @@
         "tile_3": "M_0x00.png",
         "tile_4": "S_0x00.png",
         "tile_5": "T_0x00.png"
+    },
+    "struct": {
+        "O_1": "city.png"
     }
 }
