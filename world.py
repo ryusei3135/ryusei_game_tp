@@ -39,6 +39,7 @@ class WorldData:
                 file.write(str(self.worldMap))
 
     def __makeWorldMap(self) -> None:
+        cityPos: list[int,int] = None
         data = []
         with Image.open(self.WFD["initpath"]["value"]) as img:
             worldSize: tuple[int, int] = self.WFD["worldsize"]["value"]
@@ -52,11 +53,11 @@ class WorldData:
                         r, g, b = pixel_rgb
 
                     if r == 255 and g == 255 and b == 255:
-                        xr.append({"block": 1.5, "struct": {}})
+                        xr.append({"block": 1.0, "struct": {}})
                     elif r == 255 and g == 0 and b == 0:
                         xr.append({"block": 2.0, "struct": {}})
                     elif r == 0 and g == 255 and b == 0:
-                        xr.append({"block": 1.0, "struct": {}})
+                        xr.append({"block": 1.5, "struct": {}})
                     elif r == 0 and g == 0 and b == 255:
                         xr.append({"block": 3.0, "struct": {}})
                     elif r == 0 and g == 0 and b == 0:
@@ -64,9 +65,14 @@ class WorldData:
                     else:
                         xr.append({"block": 0.0, "struct": {}})
 
+                    if self.WFD["cityPos"]["value"][0] == y + 1 \
+                            and self.WFD["cityPos"]["value"][1] == x + 1:
+                        cityPos = [x, y]
+
                 data.append(xr)
+        data[cityPos[1]][cityPos[0]]["struct"]["num"] = 1
         return data
-    
+
 
 class WorldEvtFunc:
     @staticmethod
@@ -96,16 +102,19 @@ class WorldEvtFunc:
     def mousePress(
             datas: tuple[
             list,
-            WorldData],
+            WorldData,
+            stats.FixedData],
             cameraPos: list[int, int]) -> None:
 
-        WD = datas[1]
-        mouseEvt = datas[0]
+        if datas[2]["debug"]["value"]:
+            mouseEvt = datas[0]
 
-        if mouseEvt[2]:
-            WD.worldMap[
-                mouseEvt[1] + cameraPos[1]][
-                    mouseEvt[0] + cameraPos[0]]["struct"] = {"num": 1}
+            if mouseEvt[2]:
+                datas[1].worldMap[
+                    mouseEvt[1] + cameraPos[1]][
+                        mouseEvt[0] + cameraPos[0]]["struct"] = {"num": 1}
+        else:
+            pass
 
 
 class World:
@@ -130,7 +139,6 @@ class World:
         if self.runingStats.saveProc:
             self.WD.saveWorldMap()
             self.runingStats.saveProc = False
-            print("save ok")
 
         KeyDatas = [
             self.runingStats.cameraPixelPos,
@@ -139,7 +147,8 @@ class World:
         ]
         MouseDatas = [
             self.runingStats.mouseEvt,
-            self.WD
+            self.WD,
+            stats.FixedData()
         ]
 
         WorldEvtFunc.keyPress(KeyDatas)
@@ -147,7 +156,7 @@ class World:
             WorldEvtFunc.mousePress(MouseDatas, self.runingStats.cameraPosMap)
 
     def __drawStruct(self, screen: pg.surface.Surface) -> None:
-        if "num" in self.nowStruct and self.nowStruct["num"] is 1:
+        if "num" in self.nowStruct and self.nowStruct["num"] == 1:
             screen.blit(self.struct["O_1"], self.tilePos)
 
     def draw(self, screen: pg.surface.Surface) -> None:

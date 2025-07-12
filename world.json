@@ -1,4 +1,7 @@
 {
     "worldInitPath": "world.png",
-    "worldSize": [128, 128]
+    "worldSize": [128, 128],
+    "cityPos": [45, 55],
+    "initCameraPos": [40, 40],
+    "debug": false
 }

@@ -11,7 +11,7 @@ class RuningStatus:
             = [50, 50]
         
         self.cameraPosMap: list[int, int] \
-            = [0, 0]
+            = [40, 40]
         self.cameraPixelPos: list[int, int] \
             = [0, 0]
         self.moveSpeed: int = 10
@@ -40,7 +40,7 @@ class FixedData:
                 return {"key": index, "value": self.data[index]}
             else:
                 for part in self.data:
-                    if index.lower() in str(part).lower():
+                    if index.upper() in str(part).upper():
                         return {"key": part, "value": self.data[part]}
                 else:
                     raise ValueError

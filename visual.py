@@ -20,7 +20,7 @@ class BaseVisual:
     def makeVisual(self, size: tuple[int, int]) -> None:
         makeImg = lambda path, size: pg.transform.scale(pg.image.load(path), size)
         self.__errImg: pg.surface.Surface = makeImg("img/err.png", size)
-        
+
         self.__ImgData = {
             str(path): makeImg(
                 f"img/{self.__pathData[str(path)]}", size) for path in self.__pathData

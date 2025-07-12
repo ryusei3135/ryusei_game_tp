@@ -36,7 +36,7 @@ class KeyPress:
 
     def __settingProcKey(self, key: pg.key) -> None:
         if key[pg.K_F1]:
-            self.__runingStats.saveProc = True
+            self.__runingStats.runing = False
 
 
 class MouseEvent:

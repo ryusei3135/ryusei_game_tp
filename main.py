@@ -24,6 +24,7 @@ class Game:
 
     def __gameProc(self) -> None:
         self.worldClass = World()
+        self.worldClass.WD.choiseFile("world.txt")
         self.worldClass.getScreenData(self.runingStats)
         self.worldClass.getRuningStatus(self.runingStats)
         self.KeyClass = KeyMouse.KeyPress()
