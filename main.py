@@ -20,7 +20,12 @@ class Game:
             int(ScreenInitSize.current_h / 50)]
         
         self.screen = pg.display.set_mode(ScreenSize, pg.FULLSCREEN)
-        self.__gameProc()
+        self.startGame: bool = False
+        # self.__gameProc()
+
+    def __playerProc(self, worldName: str = "sub") -> None:
+        self.player = stats.PlayerStatus(worldName)
+        self.player.GetRuningStats(self.runingStats)
 
     def __gameProc(self) -> None:
         self.worldClass = World()
@@ -32,17 +37,23 @@ class Game:
         self.MouseClass = KeyMouse.MouseEvent()
         self.MouseClass.getRuning(self.runingStats)
 
+    def startScreen(self, screen: pg.surface.Surface) -> None:
+        pass
+
     def run(self) -> None:
         while self.runingStats.runing:
             for evt in pg.event.get():
                 if evt.type == pg.QUIT:
                     self.runingStats.runing = False
 
-            self.screen.fill(self.runingStats.bgColor)
-            self.KeyClass.update()
-            self.MouseClass.update()
-            self.worldClass.update()
-            self.worldClass.draw(self.screen)
+            if self.startGame:
+                self.screen.fill(self.runingStats.bgColor)
+                self.KeyClass.update()
+                self.MouseClass.update()
+                self.worldClass.update()
+                self.worldClass.draw(self.screen)
+            else:
+                self.startScreen(self.screen)
             pg.display.flip()
             pg.time.Clock().tick(self.runingStats.fps)
         

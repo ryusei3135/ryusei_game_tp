@@ -1,4 +1,7 @@
 from json import loads
+import sqlite3
+from os import path as PATH
+from FontInit import FontData
 
 
 class RuningStatus:
@@ -23,6 +26,7 @@ class RuningStatus:
         
         self.ScreenMapSize: tuple[int, int]
         self.saveProc: bool = False
+        self.worldName: str = None
 
 
 class FixedData:
@@ -53,3 +57,28 @@ class FixedData:
                 self.data: dict = loads(file.read())
         except FileNotFoundError as err:
             print(err)
+
+
+class PlayerStatus:
+    def __init__(self, worldName: str) -> None:
+        self.__worldName = worldName
+
+    def GetRuningStats(self, runingStats: RuningStatus) -> None:
+        self.__runingStats = runingStats
+        self.__load()
+
+    def __load(self) -> bool:
+        try:
+            if PATH.isdir(self.__worldName):
+                self.__connect = sqlite3.connect(f"world/{self.__worldName}/player.db")
+                self.__cursor = self.__connect.cursor()
+                self.__runingStats.worldName = self.__worldName
+                return True
+            else:
+                raise FileNotFoundError
+        except (FileNotFoundError, sqlite3.Error):
+            self.__connect = sqlite3.connect(f"world/sub/player.db")
+            self.__cursor = self.__connect.cursor()
+            self.__runingStats.worldName = "sub"
+
+            return False
