@@ -1,8 +1,15 @@
-import pygame as pg
+from os import system
+
+try:
+    import pygame as pg
+except ModuleNotFoundError:
+    system("pip install pygame")
 
 import status as stats
 from world import World
 import KeyMouse
+
+from ui.button import *
 
 
 class Game:
@@ -38,7 +45,12 @@ class Game:
         self.MouseClass.getRuning(self.runingStats)
 
     def startScreen(self, screen: pg.surface.Surface) -> None:
-        pass
+        mouse = pg.mouse.get_pos()
+        mousePress = pg.mouse.get_pressed()
+        button = Button(ButtonData())
+        button.draw(screen)
+        if button.event(mouse, mousePress):
+            print("HELLO")
 
     def run(self) -> None:
         while self.runingStats.runing:
