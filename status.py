@@ -16,7 +16,7 @@ class RuningStatus:
             = [40, 40]
         self.cameraPixelPos: list[int, int] \
             = [0, 0]
-        self.moveSpeed: int = 10
+        self.moveSpeed: int = 5
 
         self.MOUSE_EVT_INIT: list[int, int, int] \
             = [None, None, None]

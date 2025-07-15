@@ -21,13 +21,13 @@ class Game:
         ScreenSize = [
             ScreenInitSize.current_w,
             ScreenInitSize.current_h]
-        
+
         self.runingStats.ScreenMapSize = [
             int(ScreenInitSize.current_w / 50), 
             int(ScreenInitSize.current_h / 50)]
         
         self.screen = pg.display.set_mode(ScreenSize, pg.FULLSCREEN)
-        self.startGame: bool = False
+        self.startGame: bool = True
         # self.__gameProc()
 
     def __playerProc(self, worldName: str = "sub") -> None:
@@ -36,7 +36,7 @@ class Game:
 
     def __gameProc(self) -> None:
         self.worldClass = World()
-        self.worldClass.WD.choiseFile("world.txt")
+        self.worldClass.WD.choiseFile("world/sub/world.txt")
         self.worldClass.getScreenData(self.runingStats)
         self.worldClass.getRuningStatus(self.runingStats)
         self.KeyClass = KeyMouse.KeyPress()
@@ -47,12 +47,15 @@ class Game:
     def startScreen(self, screen: pg.surface.Surface) -> None:
         mouse = pg.mouse.get_pos()
         mousePress = pg.mouse.get_pressed()
-        button = Button(ButtonData())
+        b = ButtonData()
+        button = Button(b)
         button.draw(screen)
         if button.event(mouse, mousePress):
             print("HELLO")
 
     def run(self) -> None:
+        self.__gameProc()
+        self.__playerProc()
         while self.runingStats.runing:
             for evt in pg.event.get():
                 if evt.type == pg.QUIT:
